@@ -17,7 +17,9 @@ neighbours: lit cells go dark and dark cells light up. Lit cells are black.
 - **Always solvable** — each puzzle is made by pressing random cells of a
   dark board
 - **Three difficulty levels** — Easy and Medium press a few random cells
-  (about n and 2n); Hard is a uniformly random solvable board
+  (about n and 2n); Hard is a uniformly random solvable board. On 5×5,
+  where random boards all need about 10 presses, the levels are kept
+  apart by the optimal count: Easy 4, Medium 6–7, Hard 12 or more
 - **Optimal press count** shown for every puzzle, computed by linear algebra
   over GF(2) (Gaussian elimination, then the smallest solution among those
   the null space allows: 4 on 5×5, 256 on 9×9)

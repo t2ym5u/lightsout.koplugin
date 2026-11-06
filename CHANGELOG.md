@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2026-11-05
+
+### Fixed
+- On 5×5, Medium was as hard as Hard (about 10 presses both). Medium now
+  needs 6–7 presses and Hard 12–14 (Easy stays at 4). Other sizes are
+  unchanged. This changes the 5×5 Medium and Hard puzzles a seed gives,
+  so a 5×5 Daily Challenge differs once.
+
 ## [1.0.5] - 2026-11-04
 
 ### Fixed
