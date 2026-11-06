@@ -30,9 +30,24 @@ local DEFAULT_N = 5
 -- How many random cells are pressed to build the puzzle, by difficulty.
 -- "hard" presses each cell with probability 1/2, which gives a uniformly
 -- random solvable board -- typically half the grid or so to press.
+--
+-- 5x5 is the exception: two independent sets of presses do nothing there,
+-- so the fewest presses that undo 2n = 10 random ones is about 10 anyway --
+-- as many as a fully random board. Its Medium presses 7 cells and keeps a
+-- board that needs at least 6, and its Hard keeps only boards that need at
+-- least 12 presses (15 is the most any 5x5 board needs). Larger boards
+-- already spread out (Easy n-1, Medium 2n, Hard about n*n/3 and up).
 local PRESSES = {
     easy   = function(n) return math.max(3, n - 1) end,
-    medium = function(n) return 2 * n end,
+    medium = function(n) return n == 5 and 7 or 2 * n end,
+}
+
+-- Fewest presses a kept puzzle must need (a dark board or a one-press
+-- puzzle is never worth playing).
+local MIN_PAR = {
+    easy   = function()  return 2 end,
+    medium = function(n) return n == 5 and 6 or 2 end,
+    hard   = function(n) return n == 5 and 12 or 2 end,
 }
 
 local LightsOutBoard = {}
@@ -144,6 +159,7 @@ function LightsOutBoard:generate(difficulty)
     self.difficulty = difficulty or self.difficulty
     local n, N = self.n, self.n * self.n
     local count = PRESSES[self.difficulty]
+    local min_par = (MIN_PAR[self.difficulty] or MIN_PAR.easy)(n)
     repeat
         for r = 1, n do
             for c = 1, n do self.lights[r][c] = false end
@@ -165,11 +181,11 @@ function LightsOutBoard:generate(difficulty)
             end
         end
         -- Presses can cancel out (on 5x5 and 9x9 some sets do nothing), so
-        -- the optimum may be below the count pressed; a dark board or a
-        -- one-press puzzle is not worth playing.
+        -- the optimum may be below the count pressed: draw again until the
+        -- puzzle needs enough presses for its level.
         local _, w = GF2.solve(n, self:_flat())
         self.par = w or 0
-    until self.par >= 2
+    until self.par >= min_par
 
     self.start         = self:_flat()
     self.moves         = 0

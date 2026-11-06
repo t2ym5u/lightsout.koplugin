@@ -187,6 +187,25 @@ describe("Lights Out", function()
             end
             assert.is_true(easy < hard)
         end)
+
+        -- 5x5 Medium (2n = 10 presses) used to need as many presses as Hard
+        -- (9.6 against 9.9 on average): the levels must not overlap there.
+        it("keeps the three 5x5 levels apart", function()
+            for seed = 1, 60 do
+                local e = newBoard(5, "easy", seed).par
+                local m = newBoard(5, "medium", seed).par
+                local h = newBoard(5, "hard", seed).par
+                assert.is_true(e <= 4, "easy " .. e)
+                assert.is_true(m >= 6 and m <= 7, "medium " .. m)
+                assert.is_true(h >= 12 and h <= 15, "hard " .. h)
+            end
+        end)
+
+        it("is the same puzzle for the same seed on 5x5 Hard", function()
+            local a = newBoard(5, "hard", 77)
+            local b = newBoard(5, "hard", 77)
+            assert.are.same(a.start, b.start)
+        end)
     end)
 
     describe("hints", function()
