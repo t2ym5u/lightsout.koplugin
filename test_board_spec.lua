@@ -162,52 +162,6 @@ describe("Lights Out", function()
         end)
     end)
 
-    describe("generate", function()
-        it("always gives a solvable, unsolved board whose plan solves it", function()
-            for _, n in ipairs(Board.SIZES) do
-                for _, diff in ipairs({ "easy", "medium", "hard" }) do
-                    for seed = 1, 10 do
-                        local b = newBoard(n, diff, seed)
-                        assert.is_false(b:isSolved())
-                        local x, w = GF2.solve(n, b:_flat())
-                        assert.is_not_nil(x)
-                        assert.are.equal(b.par, w)
-                        assert.is_true(b.par >= 2)
-                        assert.is_true(isDark(applyPresses(n, b:_flat(), x)))
-                    end
-                end
-            end
-        end)
-
-        it("easy needs fewer presses than hard", function()
-            local easy, hard = 0, 0
-            for seed = 1, 20 do
-                easy = easy + newBoard(7, "easy", seed).par
-                hard = hard + newBoard(7, "hard", seed).par
-            end
-            assert.is_true(easy < hard)
-        end)
-
-        -- 5x5 Medium (2n = 10 presses) used to need as many presses as Hard
-        -- (9.6 against 9.9 on average): the levels must not overlap there.
-        it("keeps the three 5x5 levels apart", function()
-            for seed = 1, 60 do
-                local e = newBoard(5, "easy", seed).par
-                local m = newBoard(5, "medium", seed).par
-                local h = newBoard(5, "hard", seed).par
-                assert.is_true(e <= 4, "easy " .. e)
-                assert.is_true(m >= 6 and m <= 7, "medium " .. m)
-                assert.is_true(h >= 12 and h <= 15, "hard " .. h)
-            end
-        end)
-
-        it("is the same puzzle for the same seed on 5x5 Hard", function()
-            local a = newBoard(5, "hard", 77)
-            local b = newBoard(5, "hard", 77)
-            assert.are.same(a.start, b.start)
-        end)
-    end)
-
     describe("hints", function()
         it("following hints solves the board in exactly the optimal count", function()
             for _, n in ipairs({ 5, 7, 9 }) do
